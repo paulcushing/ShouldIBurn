@@ -97,7 +97,7 @@ export const Main = () => {
             <h1 className="text-5xl font-extrabold leading-10 tracking-tight text-left text-gray-900 text-center sm:leading-none md:text-6xl lg:text-7xl">
                 <span className="inline md:block">Should I Burn In</span>{' '}
                 <span className="relative mt-2 text-transparent bg-clip-text bg-gradient-to-br from-indigo-600 to-indigo-500 md:inline-block">
-                    Location{/*data.name ? data.name : location*/}
+                    {data.name ? data.name : location}
                 </span>
             </h1>
             {location === '' && !loading ? (
