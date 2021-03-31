@@ -1,11 +1,19 @@
 import Head from 'next/head'
-import { Fragment } from 'react'
+import { useState, Fragment } from 'react'
+import Cookies from 'js-cookie'
 
+import Begin from '../components/begin'
 import Footer from '../components/footer'
 import Header from '../components/header'
 import Main from '../components/main'
 
 export default function IndexPage() {
+    const [permissionGranted, setPermissionGranted] = useState(false)
+
+    if (Cookies.get('lat') && Cookies.get('lon') && !permissionGranted) {
+        setPermissionGranted(true)
+    }
+
     return (
         <Fragment>
             <Head>
@@ -44,7 +52,11 @@ export default function IndexPage() {
                 <div className="mx-auto max-w-7xl">
                     <Header />
 
-                    <Main />
+                    {permissionGranted ? (
+                        <Main />
+                    ) : (
+                        <Begin setPermissionGranted={setPermissionGranted} />
+                    )}
                 </div>
             </section>
 
