@@ -1,44 +1,10 @@
-import { getFontDefinitionFromManifest } from 'next/dist/next-server/server/font-utils'
+import Cookies from 'js-cookie'
 import React, { useState, useEffect } from 'react'
 import useSWR from 'swr'
 
+import useCurrentLocation from '../hooks/useCurrentLocation'
+
 const fetcher = (...args) => fetch(...args).then((res) => res.json())
-
-const useCurrentLocation = (options = {}) => {
-    // store error message in state
-    const [error, setError] = useState()
-    const [coordinates, setCoordinates] = useState()
-
-    // Success handler for geolocation's `getCurrentPosition` method
-    const handleSuccess = (position) => {
-        const { latitude, longitude } = position.coords
-
-        setCoordinates({
-            latitude: latitude,
-            longitude: longitude,
-        })
-    }
-
-    // Error handler for geolocation's `getCurrentPosition` method
-    const handleError = (error) => {
-        setError(error.message)
-    }
-
-    useEffect(() => {
-        // If the geolocation is not defined in the used browser you can handle it as an error
-        if (!navigator.geolocation) {
-            setError('Geolocation is not supported.')
-            return
-        }
-        navigator.geolocation.getCurrentPosition(
-            handleSuccess,
-            handleError,
-            options
-        )
-    }, [options])
-
-    return { coordinates, error }
-}
 
 export const Main = () => {
     const [coord, setCoord] = useState({
@@ -47,6 +13,7 @@ export const Main = () => {
     })
     const [location, setLocation] = useState('')
     const [loading, setLoading] = useState(true)
+    const [loadingCoord, setLoadingCoord] = useState(true)
     const [data, setData] = useState({})
     const now = new Date()
     const year = now.getFullYear()
@@ -61,9 +28,22 @@ export const Main = () => {
     }
 
     const { coordinates, error } = useCurrentLocation(geolocationOptions)
-    if (loading && coordinates !== coord) {
-        //console.log('Setting coords')
+
+    if (Cookies.get('lat') && Cookies.get('lon') && loadingCoord) {
+        setCoord({
+            latitude: Cookies.get('lat'),
+            longitude: Cookies.get('lon'),
+        })
+        setLoadingCoord(false)
+    } else if (
+        loadingCoord &&
+        coordinates != undefined &&
+        coordinates !== coord
+    ) {
         setCoord(coordinates)
+        Cookies.set('lat', coordinates.latitude, { expires: 1 })
+        Cookies.set('lon', coordinates.longitude, { expires: 1 })
+        setLoadingCoord(false)
     }
 
     const owkey = process.env.NEXT_PUBLIC_OW_API_KEY
@@ -75,6 +55,7 @@ export const Main = () => {
     //console.log(geoData)
 
     // If there's a coord - get the data
+
     const openWeatherApi = coord?.latitude
         ? `https://api.openweathermap.org/data/2.5/weather?lat=${coord.latitude}&lon=${coord.longitude}&appid=${owkey}`
         : null
@@ -116,7 +97,7 @@ export const Main = () => {
             <h1 className="text-5xl font-extrabold leading-10 tracking-tight text-left text-gray-900 text-center sm:leading-none md:text-6xl lg:text-7xl">
                 <span className="inline md:block">Should I Burn In</span>{' '}
                 <span className="relative mt-2 text-transparent bg-clip-text bg-gradient-to-br from-indigo-600 to-indigo-500 md:inline-block">
-                    {data.name ? data.name : location}
+                    Location{/*data.name ? data.name : location*/}
                 </span>
             </h1>
             {location === '' && !loading ? (
