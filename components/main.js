@@ -1,5 +1,5 @@
 import Cookies from 'js-cookie'
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import useSWR from 'swr'
 
 import useCurrentLocation from '../hooks/useCurrentLocation'
@@ -81,11 +81,42 @@ export const Main = () => {
     }
 
     const aqiText = {
-        1: 'Good',
-        2: 'Fair',
-        3: 'Moderate',
-        4: 'Poor',
-        5: 'Very Poor',
+        1: {
+            Low: 0,
+            High: 50,
+            Desc: 'Good',
+            Color: 'green',
+        },
+        2: {
+            Low: 51,
+            High: 100,
+            Desc: 'Fair',
+            Color: 'yellow',
+        },
+        3: {
+            Low: 101,
+            High: 150,
+            Desc: 'Unhealthy For Sensetive Groups',
+            Color: 'orange',
+        },
+        4: {
+            Low: 151,
+            High: 200,
+            Desc: 'Unhealthy',
+            Color: 'red',
+        },
+        5: {
+            Low: 201,
+            High: 300,
+            Desc: 'Very Unhealthy',
+            Color: 'purple',
+        },
+        6: {
+            Low: 301,
+            High: 500,
+            Desc: 'Hazardous',
+            Color: 'maroon',
+        },
     }
     const aqiAcceptable = data && data.AQI ? data.AQI < 61 : false
     const windAcceptable = data && data.wind ? data.wind.speed < 11 : false
