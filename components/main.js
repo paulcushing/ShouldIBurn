@@ -1,25 +1,42 @@
 import Cookies from 'js-cookie'
 import React, { useState } from 'react'
-import useSWR from 'swr'
 
 import useCurrentLocation from '../hooks/useCurrentLocation'
 
-const fetcher = (...args) => fetch(...args).then((res) => res.json())
+async function fetchWeatherAndAirQuality(coord) {
+    const apiUrl =
+        process.env.NODE_ENV === 'production'
+            ? 'https://shouldiburn.com/api'
+            : 'http://localhost:3000/api'
+
+    const [weatherResponse, airQualityResponse] = await Promise.all([
+        fetch(apiUrl + '/weather', {
+            method: 'post',
+            body: JSON.stringify(coord),
+            headers: { 'Content-type': 'application/json' },
+        }),
+        fetch(apiUrl + '/airquality', {
+            method: 'post',
+            body: JSON.stringify(coord),
+            headers: { 'Content-type': 'application/json' },
+        }),
+    ])
+
+    const weather = await weatherResponse.json()
+    const airQuality = await airQualityResponse.json()
+
+    return { ...weather, ...airQuality }
+}
 
 export const Main = () => {
     const [coord, setCoord] = useState({
-        latitude: 0,
-        longitude: 0,
+        latitude: Cookies.get('lat') || 0,
+        longitude: Cookies.get('lon') || 0,
     })
     const [location, setLocation] = useState('')
     const [loading, setLoading] = useState(true)
     const [loadingCoord, setLoadingCoord] = useState(true)
     const [data, setData] = useState({})
-    const now = new Date()
-    const year = now.getFullYear()
-    const month = ('0' + (now.getMonth() + 1)).slice(-2)
-    const date = ('0' + now.getDate()).slice(-2)
-    const todayDate = year + '-' + month + '-' + date
 
     const geolocationOptions = {
         enableHighAccuracy: false,
@@ -29,56 +46,29 @@ export const Main = () => {
 
     const { coordinates, error } = useCurrentLocation(geolocationOptions)
 
-    if (Cookies.get('lat') && Cookies.get('lon') && loadingCoord) {
-        setCoord({
-            latitude: Cookies.get('lat'),
-            longitude: Cookies.get('lon'),
-        })
-        setLoadingCoord(false)
-    } else if (
-        loadingCoord &&
-        coordinates != undefined &&
-        coordinates !== coord
-    ) {
+    if (loadingCoord && coordinates != undefined && coordinates !== coord) {
         setCoord(coordinates)
         Cookies.set('lat', coordinates.latitude, { expires: 1 })
         Cookies.set('lon', coordinates.longitude, { expires: 1 })
         setLoadingCoord(false)
     }
 
-    const owkey = process.env.NEXT_PUBLIC_OW_API_KEY
-    const ankey = process.env.NEXT_PUBLIC_AN_API_KEY
+    if (coord?.latitude && loading) {
+        fetchWeatherAndAirQuality(coord)
+            .then((data) => {
+                setData(data)
+                setLocation(data.name)
+                setLoading(false)
+            })
+            .catch((error) => {
+                console.log(error)
+            })
+    }
 
     // If there's a location name - get the coord
     // const openWeatherGeo = `http://api.openweathermap.org/geo/1.0/zip?zip=${location}&appid=${key}`
     // const { data: geoData, error: geoError } = useSWR(location !== '' && loading ? openWeatherGeo : null, fetcher)
     //console.log(geoData)
-
-    // If there's a coord - get the data
-
-    const openWeatherApi = coord?.latitude
-        ? `https://api.openweathermap.org/data/2.5/weather?lat=${coord.latitude}&lon=${coord.longitude}&appid=${owkey}`
-        : null
-    const { data: conditionsData, error: conditionsError } = useSWR(
-        coord?.latitude && loading ? openWeatherApi : null,
-        fetcher
-    )
-
-    const airNowApi = coord?.latitude
-        ? `https://www.airnowapi.org/aq/forecast/latLong/?format=application/json&latitude=${coord.latitude}&longitude=${coord.longitude}&date=${todayDate}&distance=25&API_KEY=${ankey}`
-        : null
-    const { data: aqiData, error: aqiError } = useSWR(
-        coord?.latitude && loading ? airNowApi : null,
-        fetcher
-    )
-
-    if (conditionsError || aqiError) console.log('API Error')
-    if (conditionsData && aqiData && loading) {
-        console.log(aqiData)
-        setLoading(false)
-        setData({ ...conditionsData, ...aqiData[0] })
-        setLocation(conditionsData.name)
-    }
 
     const aqiText = {
         1: {
@@ -153,13 +143,13 @@ export const Main = () => {
                         <p className="text-3xl font-extrabold text-gray-500">
                             Today's Wind Speed:{' '}
                             <span className="text-transparent bg-clip-text bg-gradient-to-br from-indigo-600 to-indigo-500">
-                                {data.wind.speed}
+                                {data?.wind?.speed}
                             </span>
                         </p>
                         <p className="text-3xl font-extrabold text-gray-500">
                             Today's Air Quality:{' '}
                             <span className="text-transparent bg-clip-text bg-gradient-to-br from-indigo-600 to-indigo-500">
-                                {data.AQI}
+                                {data?.AQI}
                             </span>
                         </p>
                     </div>
