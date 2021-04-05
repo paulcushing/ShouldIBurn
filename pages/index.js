@@ -111,6 +111,8 @@ export default function IndexPage() {
                             coord={coord}
                             setCoord={setCoord}
                             setPermissionGranted={setPermissionGranted}
+                            setHaveUserLoc={setHaveUserLoc}
+                            setUserLocation={setUserLocation}
                         />
                     ) : (
                         <Begin

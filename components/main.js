@@ -118,6 +118,8 @@ export const Main = (props) => {
         Cookies.remove('lon')
         props.setCoord(null)
         props.setPermissionGranted(false)
+        props.setHaveUserLoc(false)
+        props.setUserLocation('')
     }
 
     return (
