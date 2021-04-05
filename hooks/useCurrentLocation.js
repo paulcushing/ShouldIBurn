@@ -35,7 +35,7 @@ const useCurrentLocation = (options = {}) => {
         }
     }, [options])
 
-    return { coordinates, error }
+    return coordinates
 }
 
 export default useCurrentLocation
