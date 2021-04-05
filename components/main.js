@@ -110,7 +110,7 @@ export const Main = (props) => {
             Color: 'maroon',
         },
     }
-    const aqiAcceptable = data && data.AQI ? data.AQI < 61 : false
+    const aqiAcceptable = data && data.AQI ? data.AQI < 60 : false
     const windAcceptable = data && data.wind ? data.wind.speed < 11 : false
 
     const resetCookies = () => {
@@ -153,16 +153,16 @@ export const Main = (props) => {
                             )}
                         </h2>
                         <div className="mt-14">
-                            <p className="text-3xl font-extrabold text-gray-500">
+                            <p className="text-2xl font-bold text-gray-500">
                                 Today's Wind Speed:{' '}
                                 <span className="text-transparent bg-clip-text bg-gradient-to-br from-indigo-600 to-indigo-500">
-                                    {data?.wind?.speed}
+                                    {data?.wind?.speed} <span className="text-sm text-gray-300">MPH</span>
                                 </span>
                             </p>
-                            <p className="text-3xl font-extrabold text-gray-500">
+                            <p className="text-2xl font-bold text-gray-500">
                                 Today's Air Quality:{' '}
                                 <span className="text-transparent bg-clip-text bg-gradient-to-br from-indigo-600 to-indigo-500">
-                                    {data?.AQI}
+                                    {data?.AQI} <span className="text-sm text-gray-300">AQI</span>
                                 </span>
                             </p>
                         </div>
