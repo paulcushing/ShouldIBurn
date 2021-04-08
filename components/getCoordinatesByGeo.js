@@ -1,7 +1,7 @@
 import Cookies from 'js-cookie'
 import useCurrentLocation from '../hooks/useCurrentLocation'
 
-export const GetGeoLocation = (props) => {
+export const GetCoordinatesByGeo = (props) => {
     const geolocationOptions = {
         enableHighAccuracy: false,
         timeout: 1000 * 60 * 1, // 1 minute
@@ -13,10 +13,10 @@ export const GetGeoLocation = (props) => {
     if (coordinates != undefined) {
         Cookies.set('lat', coordinates.latitude)
         Cookies.set('lon', coordinates.longitude)
-        props.setCoord(coordinates)
+        props.setCoordinates(coordinates)
     }
 
     return null
 }
 
-export default GetGeoLocation
+export default GetCoordinatesByGeo

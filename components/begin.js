@@ -2,7 +2,7 @@ import React from 'react'
 
 export const Begin = (props) => {
     const saveUserLocation = () => {
-        props.setHaveUserLoc(true)
+        props.setHaveUserLocation(true)
     }
     return (
         <div className="container max-w-lg px-4 py-8 mx-auto text-left md:max-w-none text-center">
