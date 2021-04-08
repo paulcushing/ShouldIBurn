@@ -42,6 +42,11 @@ export default function IndexPage() {
 
     if (haveUserLocation && !coordinates) {
         getCoordinatesByCityZip(userLocation).then((data) => {
+            if(!data || !data.lat || !data.lon) {
+                setError("Location not found.")
+                resetLocation()
+                return null
+            }
             const coords = {
                 latitude: data.lat,
                 longitude: data.lon,
@@ -59,15 +64,12 @@ export default function IndexPage() {
     if (coordinates && !conditions) {
         getConditions(coordinates).then((data) => {
             if(!data.wind || !data.AQI) {
-                setError("Failed to get conditions for that location")
+                setError("Failed to get conditions for that location.")
                 resetLocation()
                 return null
             }
             setConditions(data)
-        }).then(() => {
-            //setLoading(false)
         })
-        
     }
 
     return (

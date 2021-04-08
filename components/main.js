@@ -41,8 +41,14 @@ export const Main = (props) => {
             Color: 'maroon',
         },
     }
-    const aqiAcceptable = data && data.AQI ? data.AQI < 60 : false
-    const windAcceptable = data && data.wind ? data.wind.speed < 11 : false
+
+    const windSpeed = data.wind.speed
+    const windGusts = data.wind.gust
+    const airQualityScore = data.AQI
+
+    const aqiAcceptable = airQualityScore < 60
+    const windAcceptable = windSpeed < 10
+    const gustWarning = windGusts > 12
 
     return (
         <div className="container max-w-lg px-4 py-8 mx-auto text-left md:max-w-none text-center">
@@ -71,17 +77,25 @@ export const Main = (props) => {
                         <div className="mt-8">
                             <p className="text-xl font-bold text-gray-500">
                                 Today's Wind Speed:{' '}
-                                <span className="text-transparent bg-clip-text bg-gradient-to-br from-indigo-600 to-indigo-500">
+                                <span className={windAcceptable ? "text-indigo-600" : "text-red-500"}>
                                     {data?.wind?.speed} <span className="text-sm text-gray-300">MPH</span>
                                 </span>
                             </p>
                             <p className="text-xl font-bold text-gray-500">
                                 Today's Air Quality:{' '}
-                                <span className="text-transparent bg-clip-text bg-gradient-to-br from-indigo-600 to-indigo-500">
+                                <span className={aqiAcceptable ? "text-indigo-600" : "text-red-500"}>
                                     {data?.AQI} <span className="text-sm text-gray-300">AQI</span>
                                 </span>
                             </p>
                         </div>
+                        {gustWarning && !aqiAcceptable ? (
+                            <div className="mt-8 border-dashed border-2 border-red-400 rounded-md p-4 bg-red-100">
+                            <p className="text-md text-gray-800">
+                                <span className="text-3xl">*</span> Wind gusts may still exceed 10 MPH. You are responsible to monitor the wind speeds when you burn and exercise due caution.
+                            </p>
+                        </div>
+                        ) : null}
+                        
                     </div>
                     <div className="mx-auto mt-5 text-gray-500 md:mt-12 md:max-w-lg text-center lg:text-lg">
                         <button

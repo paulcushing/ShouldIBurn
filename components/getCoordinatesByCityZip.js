@@ -13,8 +13,11 @@ async function getCoordinatesByCityZip(userLocation) {
             zipcode: userLocation,
         }
     } else {
+        const locationTextArray = userLocation.split(',')
+       
+        const queryUserLocation = locationTextArray[1] ? locationTextArray[0] + ',' + locationTextArray[1].replace(/\s/g, '') : userLocation 
         loc = {
-            city: userLocation,
+            city: queryUserLocation,
         }
     }
 
@@ -26,7 +29,7 @@ async function getCoordinatesByCityZip(userLocation) {
 
     const coordinates = await coordResponse.json()
 
-    return coordinates
+    return Array.isArray(coordinates) ? coordinates[0] : coordinates
 }
 
 export default getCoordinatesByCityZip
