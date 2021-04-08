@@ -1,67 +1,73 @@
 import Head from 'next/head'
-import { useState, Fragment, useEffect } from 'react'
+import { useState, Fragment } from 'react'
 import Cookies from 'js-cookie'
 
 import Begin from '../components/begin'
+import ErrorBanner from '../components/errorBanner'
 import Footer from '../components/footer'
-import GetGeoLocation from '../components/getGeoLocation'
+import getConditions from '../components/getConditions'
+import getCoordinatesByCityZip from '../components/getCoordinatesByCityZip'
+import GetCoordinatesByGeo from '../components/getCoordinatesByGeo'
 import Header from '../components/header'
+import Loader from '../components/loader'
 import Main from '../components/main'
 
-// Gets Coordinates based on zipcode or city from our API
-async function fetchCoords(userLocation) {
-    const apiUrl =
-        process.env.NODE_ENV === 'production'
-            ? 'https://shouldiburn.com/api'
-            : 'http://localhost:3000/api'
-
-    let isZip = /^\d+$/.test(userLocation)
-    let loc
-
-    if (isZip) {
-        loc = {
-            zipcode: userLocation,
-        }
-    } else {
-        loc = {
-            city: userLocation,
-        }
-    }
-
-    const coordResponse = await fetch(apiUrl + '/getcoordinates', {
-        method: 'post',
-        body: JSON.stringify(loc),
-        headers: { 'Content-type': 'application/json' },
-    })
-
-    const coordinates = await coordResponse.json()
-
-    return coordinates
-}
 
 export default function IndexPage() {
     const [permissionGranted, setPermissionGranted] = useState(false)
-    const [haveUserLoc, setHaveUserLoc] = useState(false)
+    const [haveUserLocation, setHaveUserLocation] = useState()
     const [userLocation, setUserLocation] = useState('')
-    const [coord, setCoord] = useState()
-    const [loading, setLoading] = useState(true)
+    const [coordinates, setCoordinates] = useState()
+    const [conditions, setConditions] = useState()
+    const [error, setError] = useState()
 
-    if (Cookies.get('lat') && Cookies.get('lon') && !coord) {
-        setCoord({
+    const resetLocation = () => {
+        Cookies.remove('lat')
+        Cookies.remove('lon')
+        setCoordinates(null)
+        setPermissionGranted(false)
+        setHaveUserLocation(false)
+        setUserLocation('')
+        setConditions('')
+    }
+
+    // If cookies are set, skip "Begin"
+    if (Cookies.get('lat') && Cookies.get('lon') && !coordinates) {
+        setCoordinates({
             latitude: Cookies.get('lat'),
             longitude: Cookies.get('lon'),
         })
+        setHaveUserLocation(true)
     }
 
-    if (haveUserLoc && !coord) {
-        console.log('Fetching Coordinates')
-        fetchCoords(userLocation).then((data) => {
+    if (haveUserLocation && !coordinates) {
+        getCoordinatesByCityZip(userLocation).then((data) => {
             const coords = {
                 latitude: data.lat,
                 longitude: data.lon,
             }
-            setCoord(coords)
+            setCoordinates(coords)
+            Cookies.set('lat', data.lat, {
+                secure: process.env.NODE_ENV === 'production' ? true : false,
+            })
+            Cookies.set('lon', data.lon, {
+                secure: process.env.NODE_ENV === 'production' ? true : false,
+            })
         })
+    }
+
+    if (coordinates && !conditions) {
+        getConditions(coordinates).then((data) => {
+            if(!data.wind || !data.AQI) {
+                setError("Failed to get conditions for that location")
+                resetLocation()
+                return null
+            }
+            setConditions(data)
+        }).then(() => {
+            //setLoading(false)
+        })
+        
     }
 
     return (
@@ -98,38 +104,35 @@ export default function IndexPage() {
                 <meta name="msapplication-TileColor" content="#5045e4" />
                 <meta name="theme-color" content="#ffffff"></meta>
             </Head>
+            {error ? (<ErrorBanner errorText={error} setError={setError} />) : null}
             <section className="w-full px-6 pb-12 antialiased bg-white">
                 <div className="mx-auto max-w-7xl">
                     <Header />
 
-                    {permissionGranted && !coord ? (
-                        <GetGeoLocation setCoord={setCoord} />
+                    {!haveUserLocation && !conditions ? (
+                        <Begin
+                        setPermissionGranted={setPermissionGranted}
+                        userLocation={userLocation}
+                        setHaveUserLocation={setHaveUserLocation}
+                        setUserLocation={setUserLocation}
+                    />
                     ) : null}
 
-                    {coord ? (
-                        <Main
-                            coord={coord}
-                            setCoord={setCoord}
-                            setPermissionGranted={setPermissionGranted}
-                            setHaveUserLoc={setHaveUserLoc}
-                            setUserLocation={setUserLocation}
-                        />
-                    ) : (
-                        <Begin
-                            setPermissionGranted={setPermissionGranted}
-                            setHaveUserLoc={setHaveUserLoc}
-                            userLocation={userLocation}
-                            setUserLocation={setUserLocation}
-                        />
-                    )}
+                    {((haveUserLocation && !conditions) || (permissionGranted && !conditions)) ? (
+                        <Loader />
+                    ) : null}
 
-                    {/* {loading ? (
-                        <div className="mx-auto mt-5 text-gray-500 md:mt-12 md:max-w-lg md:text-center lg:text-lg">
-                            <h2 className="text-5xl font-extrabold leading-10 tracking-tight text-left text-gray-900 md:text-center">
-                                Loading...
-                            </h2>
-                        </div>
-                    ) : null} */}
+                    {permissionGranted && !coordinates ? (
+                        <GetCoordinatesByGeo setCoordinates={setCoordinates} />
+                    ) : null}
+
+                    {conditions ? (
+                        <Main
+                            conditions={conditions}
+                            resetLocation={resetLocation}
+                        />
+                    ) : null}
+
                 </div>
             </section>
 
