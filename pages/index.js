@@ -109,7 +109,7 @@ export default function IndexPage() {
                 <div className="mx-auto max-w-7xl">
                     <Header />
 
-                    {!haveUserLocation && !conditions ? (
+                    {!haveUserLocation && !conditions && !permissionGranted ? (
                         <Begin
                         setPermissionGranted={setPermissionGranted}
                         userLocation={userLocation}
@@ -118,7 +118,7 @@ export default function IndexPage() {
                     />
                     ) : null}
 
-                    {((haveUserLocation && !conditions) || (permissionGranted && !conditions)) ? (
+                    {(haveUserLocation && !conditions) || (permissionGranted && !conditions) ? (
                         <Loader />
                     ) : null}
 
