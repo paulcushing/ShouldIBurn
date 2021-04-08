@@ -15,6 +15,7 @@ export default (req, res) => {
     } else if (city) {
         const formattedCity = city.replace(/\s/g, '') + ',US'
         url = `http://api.openweathermap.org/geo/1.0/direct?q=${formattedCity}&limit=1&appid=${process.env.OW_API_KEY}`
+        console.log(url)
     }
 
     return new Promise((resolve, reject) => {
