@@ -18,7 +18,7 @@ export const init = () => {
               process.env.NEXT_PUBLIC_SENTRY_SERVER_ROOT_DIR,
               'app:///'
             )
-            frame.filename = frame.filename.replace('.next', '_next')
+            frame.filename = frame.filename.replace('.next', 'opt/build/repo/_next')
             return frame
           },
         })
