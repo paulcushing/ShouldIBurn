@@ -1,8 +1,10 @@
-//import 'tailwindcss/tailwind.css'
+import { init } from '../utils/sentry'
 import '../styles/globals.css'
 
-function MyApp({ Component, pageProps }) {
-    return <Component {...pageProps} />
+init()
+
+function MyApp({ Component, pageProps, err }) {
+    return <Component {...pageProps} err={err} />
 }
 
 export default MyApp
