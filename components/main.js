@@ -76,13 +76,13 @@ export const Main = (props) => {
                         </h2>
                         <div className="mt-8">
                             <p className="text-xl font-bold text-gray-500">
-                                Today's Wind Speed:{' '}
+                                Current Wind Speed:{' '}
                                 <span className={windAcceptable ? "text-indigo-600" : "text-red-500"}>
                                     {data?.wind?.speed} <span className="text-sm text-gray-300">MPH</span>
                                 </span>
                             </p>
                             <p className="text-xl font-bold text-gray-500">
-                                Today's Air Quality:{' '}
+                                Current Air Quality:{' '}
                                 <span className={aqiAcceptable ? "text-indigo-600" : "text-red-500"}>
                                     {data?.AQI} <span className="text-sm text-gray-300">AQI</span>
                                 </span>
