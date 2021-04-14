@@ -46,21 +46,21 @@ module.exports = {
     // and upload the source maps to sentry.
     // This is an alternative to manually uploading the source maps
     // Note: This is disabled in development mode.
-    if (
-      SENTRY_DSN &&
-      SENTRY_ORG &&
-      SENTRY_PROJECT &&
-      SENTRY_AUTH_TOKEN &&
-      NODE_ENV === 'production'
-    ) {
-      config.plugins.push(
-        new SentryWebpackPlugin({
-          include: '.',
-          ignore: ['node_modules'],
-          stripPrefix: ['webpack://_N_E/'],
-        })
-      )
-    }
+    // if (
+    //   SENTRY_DSN &&
+    //   SENTRY_ORG &&
+    //   SENTRY_PROJECT &&
+    //   SENTRY_AUTH_TOKEN &&
+    //   NODE_ENV === 'production'
+    // ) {
+    //   config.plugins.push(
+    //     new SentryWebpackPlugin({
+    //       include: '.',
+    //       ignore: ['node_modules'],
+    //       stripPrefix: ['webpack://_N_E/'],
+    //     })
+    //   )
+    // }
     return config
   },
   basePath,
