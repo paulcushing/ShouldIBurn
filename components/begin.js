@@ -1,8 +1,8 @@
 import React from 'react'
 
 export const Begin = (props) => {
-    const saveUserLocation = () => {
-        props.setHaveUserLocation(true)
+    const saveuserCityZip = () => {
+        props.sethaveUserCityZip(true)
     }
     return (
         <div className="container max-w-lg px-4 py-8 mx-auto text-left md:max-w-none text-center">
@@ -28,12 +28,12 @@ export const Begin = (props) => {
                     id="location"
                     className="p-6 border-solid border-2 rounded-md border-indigo-600"
                     type="text"
-                    value={props.userLocation}
-                    onChange={(e) => props.setUserLocation(e.target.value)}
+                    value={props.userCityZip}
+                    onChange={(e) => props.setUserCityZip(e.target.value)}
                     placeholder="City or Zip Code"
                 />
                 <button
-                    onClick={() => saveUserLocation()}
+                    onClick={() => saveuserCityZip()}
                     className="text-xl leading-10 tracking-tight text-white rounded-full bg-indigo-600 px-4 m-2 text-center"
                 >
                     Go

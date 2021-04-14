@@ -15,8 +15,8 @@ import Main from '../components/main'
 
 export default function IndexPage() {
     const [permissionGranted, setPermissionGranted] = useState(false)
-    const [haveUserLocation, setHaveUserLocation] = useState()
-    const [userLocation, setUserLocation] = useState('')
+    const [haveUserCityZip, sethaveUserCityZip] = useState()
+    const [userCityZip, setUserCityZip] = useState('')
     const [coordinates, setCoordinates] = useState()
     const [conditions, setConditions] = useState()
     const [error, setError] = useState()
@@ -26,9 +26,10 @@ export default function IndexPage() {
         Cookies.remove('lon')
         setCoordinates(null)
         setPermissionGranted(false)
-        setHaveUserLocation(false)
-        setUserLocation('')
+        sethaveUserCityZip(false)
+        setUserCityZip('')
         setConditions('')
+        setError(null)
     }
 
     // If cookies are set, skip "Begin"
@@ -37,11 +38,11 @@ export default function IndexPage() {
             latitude: Cookies.get('lat'),
             longitude: Cookies.get('lon'),
         })
-        setHaveUserLocation(true)
+        sethaveUserCityZip(true)
     }
 
-    if (haveUserLocation && !coordinates) {
-        getCoordinatesByCityZip(userLocation).then((data) => {
+    if (haveUserCityZip && !coordinates) {
+        getCoordinatesByCityZip(userCityZip).then((data) => {
             if(!data || !data.lat || !data.lon) {
                 setError("Location not found.")
                 resetLocation()
@@ -71,6 +72,13 @@ export default function IndexPage() {
             setConditions(data)
         })
     }
+
+    // console.log("permissionGranted: ", permissionGranted)
+    // console.log("haveUserCityZip: ", haveUserCityZip)
+    // console.log("userCityZip: ", userCityZip)
+    // console.log("coordinates: ", coordinates)
+    // console.log("conditions: ", conditions)
+    // console.log("error: ", error)
 
     return (
         <Fragment>
@@ -106,26 +114,29 @@ export default function IndexPage() {
                 <meta name="msapplication-TileColor" content="#5045e4" />
                 <meta name="theme-color" content="#ffffff"></meta>
             </Head>
-            {error ? (<ErrorBanner errorText={error} setError={setError} />) : null}
+            {error ? (<ErrorBanner errorText={error} resetLocation={resetLocation} />) : null}
             <section className="w-full px-6 pb-12 antialiased bg-white">
                 <div className="mx-auto max-w-7xl">
                     <Header />
 
-                    {!haveUserLocation && !conditions && !permissionGranted ? (
+                    {!haveUserCityZip && !conditions && !permissionGranted ? (
                         <Begin
                         setPermissionGranted={setPermissionGranted}
-                        userLocation={userLocation}
-                        setHaveUserLocation={setHaveUserLocation}
-                        setUserLocation={setUserLocation}
+                        userCityZip={userCityZip}
+                        sethaveUserCityZip={sethaveUserCityZip}
+                        setUserCityZip={setUserCityZip}
                     />
                     ) : null}
 
-                    {(haveUserLocation && !conditions) || (permissionGranted && !conditions) ? (
+                    {haveUserCityZip && !conditions || coordinates && !conditions ? (
                         <Loader />
                     ) : null}
 
                     {permissionGranted && !coordinates ? (
-                        <GetCoordinatesByGeo setCoordinates={setCoordinates} />
+                        <Fragment>
+                        <Loader />
+                        <GetCoordinatesByGeo setCoordinates={setCoordinates} setError={setError} />
+                        </Fragment>
                     ) : null}
 
                     {conditions ? (
