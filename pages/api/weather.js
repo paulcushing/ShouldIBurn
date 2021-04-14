@@ -12,7 +12,7 @@ export default (req, res) => {
 
     const lat = req.body.latitude
     const lon = req.body.longitude
-    const openWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${process.env.OW_API_KEY}`
+    const openWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=imperial&appid=${process.env.OW_API_KEY}`
 
     return new Promise((resolve, reject) => {
         fetch(openWeatherUrl)
