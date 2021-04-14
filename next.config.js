@@ -6,12 +6,20 @@ const {
   SENTRY_PROJECT,
   SENTRY_AUTH_TOKEN,
   NODE_ENV,
+  VERCEL_GIT_COMMIT_SHA,
 } = process.env
 
 process.env.SENTRY_DSN = SENTRY_DSN
 const basePath = ''
 
 module.exports = {
+  productionBrowserSourceMaps: true,
+  env: {
+    // Make the COMMIT_SHA available to the client so that Sentry events can be
+    // marked for the release they belong to. It may be undefined if running
+    // outside of Vercel
+    NEXT_PUBLIC_COMMIT_SHA: VERCEL_GIT_COMMIT_SHA,
+  },
   webpack: (config, options) => {
     // In `pages/_app.js`, Sentry is imported from @sentry/browser. While
     // @sentry/node will run in a Node.js environment. @sentry/node will use
@@ -46,21 +54,24 @@ module.exports = {
     // and upload the source maps to sentry.
     // This is an alternative to manually uploading the source maps
     // Note: This is disabled in development mode.
-    // if (
-    //   SENTRY_DSN &&
-    //   SENTRY_ORG &&
-    //   SENTRY_PROJECT &&
-    //   SENTRY_AUTH_TOKEN &&
-    //   NODE_ENV === 'production'
-    // ) {
-    //   config.plugins.push(
-    //     new SentryWebpackPlugin({
-    //       include: '.',
-    //       ignore: ['node_modules'],
-    //       stripPrefix: ['webpack://_N_E/'],
-    //     })
-    //   )
-    // }
+    if (
+      SENTRY_DSN &&
+      SENTRY_ORG &&
+      SENTRY_PROJECT &&
+      SENTRY_AUTH_TOKEN &&
+      VERCEL_GIT_COMMIT_SHA &&
+      NODE_ENV === 'production'
+    ) {
+      config.plugins.push(
+        new SentryWebpackPlugin({
+          include: '.next',
+          ignore: ['node_modules'],
+          stripPrefix: ['webpack://_N_E/'],
+          urlPrefix: `~${basePath}/_next`,
+          release: VERCEL_GIT_COMMIT_SHA,
+        })
+      )
+    }
     return config
   },
   basePath,
