@@ -9,7 +9,7 @@ async function getConditions(coordinates) {
         fetch(apiUrl + '/weather', {
             method: 'post',
             body: JSON.stringify(coordinates),
-            headers: { 'Content-type': 'application/json' },
+            headers: { 'Content-type': 'application/json', 'Cache-Control': 'no-store, max-age=0' },
         })
         .then((data) => {
             return data.json() 
@@ -20,7 +20,7 @@ async function getConditions(coordinates) {
         fetch(apiUrl + '/airquality', {
             method: 'post',
             body: JSON.stringify(coordinates),
-            headers: { 'Content-type': 'application/json' },
+            headers: { 'Content-type': 'application/json', 'Cache-Control': 'no-store, max-age=0' },
         }).then((data) => {
             return data.json()
         }).catch((error) => {
