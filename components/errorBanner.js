@@ -12,7 +12,7 @@ export const ErrorBanner = (props) => (
         </p>
       </div>
       <div className="order-2 flex-shrink-0 sm:order-3 sm:ml-3">
-        <button onClick={() => props.resetLocation()} type="button" className="-mr-1 flex p-2 rounded-md hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-white sm:-mr-2">
+        <button onClick={() => props.clearError()} type="button" className="-mr-1 flex p-2 rounded-md hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-white sm:-mr-2">
           <span className="sr-only">Dismiss</span>
           <svg className="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />

@@ -29,6 +29,10 @@ export default function IndexPage() {
         sethaveUserCityZip(false)
         setUserCityZip('')
         setConditions('')
+    }
+
+    const clearError = () => {
+        resetLocation()
         setError(null)
     }
 
@@ -83,38 +87,10 @@ export default function IndexPage() {
     return (
         <Fragment>
             <Head>
-                <title>Should I Burn?</title>
-                <meta
-                    name="viewport"
-                    content="initial-scale=1.0, width=device-width"
-                />
-                <link
-                    rel="apple-touch-icon"
-                    sizes="180x180"
-                    href="/apple-touch-icon.png"
-                />
-                <link
-                    rel="icon"
-                    type="image/png"
-                    sizes="32x32"
-                    href="/favicon-32x32.png"
-                />
-                <link
-                    rel="icon"
-                    type="image/png"
-                    sizes="16x16"
-                    href="/favicon-16x16.png"
-                />
-                <link rel="manifest" href="/site.webmanifest" />
-                <link
-                    rel="mask-icon"
-                    href="/safari-pinned-tab.svg"
-                    color="#5045e4"
-                />
-                <meta name="msapplication-TileColor" content="#5045e4" />
-                <meta name="theme-color" content="#ffffff"></meta>
+                <title>Should I Burn? | ShouldIBurn.com</title>
+                <meta name="description" content="Find out if the conditions are right to burn weeds or have a fire on your property." />
             </Head>
-            {error ? (<ErrorBanner errorText={error} resetLocation={resetLocation} />) : null}
+            {error ? (<ErrorBanner errorText={error} clearError={clearError} />) : null}
             <section className="w-full px-6 pb-12 antialiased bg-white">
                 <div className="mx-auto max-w-7xl">
                     <Header />

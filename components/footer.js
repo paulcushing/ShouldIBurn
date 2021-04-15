@@ -22,7 +22,7 @@ export const Footer = () => (
         </div>
       </nav>
       <div className="flex justify-center mt-8 space-x-6">
-        <a href="https://github.com/paulcushing/ShouldIBurn" className="text-gray-400 hover:text-gray-500">
+        <a href="https://github.com/paulcushing/ShouldIBurn" className="text-gray-500 hover:text-gray-600">
           <span className="sr-only">GitHub</span>
           <svg className="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
             <path
@@ -34,7 +34,7 @@ export const Footer = () => (
         </a>
         
       </div>
-      <p className="mt-8 text-base leading-6 text-center text-gray-400">
+      <p className="mt-8 text-base leading-6 text-center text-gray-500">
         © 2021{" "}
         <a
           className="text-indigo-600"
