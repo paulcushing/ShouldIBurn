@@ -9,10 +9,15 @@ const {
   VERCEL_GIT_COMMIT_SHA,
 } = process.env
 
+const withWorkbox = require("next-with-workbox");
+
 process.env.SENTRY_DSN = SENTRY_DSN
 const basePath = ''
 
-module.exports = {
+module.exports = withWorkbox({
+  workbox: {
+    //swSrc: "worker.js",
+   },
   target: 'serverless',
   productionBrowserSourceMaps: true,
   env: {
@@ -76,4 +81,4 @@ module.exports = {
     return config
   },
   basePath,
-}
+})
