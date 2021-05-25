@@ -38,4 +38,4 @@ The app is currently deployed to ShouldIBurn.com. I'd like to keep things simple
 
 -   Add Sentry.io for monitoring
 -   Allow user to reset cookies (location) to avoid stale data if they've changed locations
--   Allow user to chooze location rather than rely on geolocation
+-   Allow user to choose location rather than rely on geolocation
