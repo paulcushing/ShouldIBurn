@@ -68,7 +68,8 @@ export default function IndexPage() {
 
     if (coordinates && !conditions) {
         getConditions(coordinates).then((data) => {
-            if(!data.wind || !data.AQI) {
+            //console.log(data);
+            if(!data.weather.wind || !data.air.list[0].main.aqi) {
                 setError("Failed to get conditions for that location.")
                 resetLocation()
                 return null

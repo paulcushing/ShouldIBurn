@@ -13,19 +13,39 @@ export default (req, res) => {
     const lat = req.body.latitude
     const lon = req.body.longitude
     const openWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=imperial&appid=${process.env.OW_API_KEY}`
+    const openWeatherAirUrl = `http://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${process.env.OW_API_KEY}`;
 
-    return new Promise((resolve, reject) => {
+    const weather = new Promise((resolve, reject) => {
         fetch(openWeatherUrl)
             .then((response) => response.json())
             .then((data) => {
-                //console.log(data)
-                res.status(200).json(data)
-                resolve()
+                //res.status(200).json(data)
+                resolve(data)
             })
             .catch((err) => {
                 console.log(err)
-                res.status(500)
+                //res.status(500)
                 resolve()
             })
+    })
+
+    const air = new Promise((resolve, reject) => {
+        fetch(openWeatherAirUrl)
+            .then((response) => response.json())
+            .then((data) => {
+                resolve(data)
+            })
+            .catch((err) => {
+                console.log(err)
+                //res.status(500)
+                resolve()
+            })
+    })
+
+    return Promise.all([weather, air]).then(values => {
+        res.status(200).json({
+            weather: values[0],
+            air: values[1]
+        })
     })
 }
