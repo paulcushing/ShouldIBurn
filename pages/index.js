@@ -68,7 +68,9 @@ export default function IndexPage() {
 
     if (coordinates && !conditions) {
         getConditions(coordinates).then((data) => {
-            //console.log(data);
+            console.log(data);
+
+
             if(!data.weather.wind || !data.air.list[0].main.aqi) {
                 setError("Failed to get conditions for that location.")
                 resetLocation()
@@ -77,13 +79,6 @@ export default function IndexPage() {
             setConditions(data)
         })
     }
-
-    // console.log("permissionGranted: ", permissionGranted)
-    // console.log("haveUserCityZip: ", haveUserCityZip)
-    // console.log("userCityZip: ", userCityZip)
-    // console.log("coordinates: ", coordinates)
-    // console.log("conditions: ", conditions)
-    // console.log("error: ", error)
 
     return (
         <Fragment>
