@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@netlify/plugin-nextjs": "^4.5.0",
     "@sentry/nextjs": "^6.19.7",
     "@zeit/next-source-maps": "^0.0.3",
     "autoprefixer": "^10.2.5",
