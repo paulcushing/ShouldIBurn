@@ -1,7 +1,3 @@
-import { init } from '../../utils/sentry'
-
-init()
-
 const fetch = require('node-fetch')
 
 export default (req, res) => {
