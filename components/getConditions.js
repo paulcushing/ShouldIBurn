@@ -6,23 +6,25 @@ async function getConditions(coordinates) {
             : 'http://localhost:3000/api'
 
     const [weatherResponse] = await Promise.all([
-        fetch(apiUrl + '/weather', {
+        fetch(apiUrl + '/conditions', {
             method: 'post',
             body: JSON.stringify(coordinates),
-            headers: { 'Content-type': 'application/json', 'Cache-Control': 'no-store, max-age=0' },
+            headers: {
+                'Content-type': 'application/json',
+                'Cache-Control': 'no-store, max-age=0',
+            },
         })
-        .then((data) => {
-            return data.json() 
-        })
-        .catch((error) => {
-            return error
-        }),
+            .then((data) => {
+                return data.json()
+            })
+            .catch((error) => {
+                return error
+            }),
     ])
 
     const weather = await weatherResponse
 
     return weather
-    
 }
 
 export default getConditions

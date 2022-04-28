@@ -1,10 +1,8 @@
-import { init } from '../../utils/sentry'
-
-init()
+import { withSentry } from '@sentry/nextjs'
 
 const fetch = require('node-fetch')
 
-export default (req, res) => {
+const handler = async (req, res) => {
     if (!req.body.zipcode && !req.body.city) {
         res.status(400).json({ error: 'Missing required parameters' })
         return
@@ -36,3 +34,5 @@ export default (req, res) => {
             })
     })
 }
+
+export default withSentry(handler)

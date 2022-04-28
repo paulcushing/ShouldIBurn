@@ -10,8 +10,15 @@ const handler = async (req, res) => {
 
     const lat = req.body.latitude
     const lon = req.body.longitude
+
+    const now = new Date()
+    const year = now.getFullYear()
+    const month = ('0' + (now.getMonth() + 1)).slice(-2)
+    const date = ('0' + now.getDate()).slice(-2)
+    const todayDate = year + '-' + month + '-' + date
+
     const openWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=imperial&appid=${process.env.OW_API_KEY}`
-    const openWeatherAirUrl = `https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${process.env.OW_API_KEY}`
+    const airNowUrl = `https://www.airnowapi.org//aq/observation/latLong/current/?format=application/json&latitude=${lat}&longitude=${lon}&date=${todayDate}&distance=50&API_KEY=${process.env.AN_API_KEY}`
 
     const weather = new Promise((resolve, reject) => {
         fetch(openWeatherUrl)
@@ -26,7 +33,7 @@ const handler = async (req, res) => {
     })
 
     const air = new Promise((resolve, reject) => {
-        fetch(openWeatherAirUrl)
+        fetch(airNowUrl)
             .then((response) => response.json())
             .then((data) => {
                 resolve(data)
