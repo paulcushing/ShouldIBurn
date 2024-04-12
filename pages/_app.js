@@ -1,6 +1,5 @@
 import Head from 'next/head'
 import { useEffect } from 'react'
-import { Workbox } from 'workbox-window'
 import '../styles/globals.css'
 
 function MyApp({ Component, pageProps, err }) {
@@ -14,8 +13,6 @@ function MyApp({ Component, pageProps, err }) {
             )
             return
         }
-        const wb = new Workbox('sw.js', { scope: '/' })
-        wb.register()
     }, [])
 
     return (
