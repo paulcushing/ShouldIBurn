@@ -21,7 +21,7 @@ export default function ContactPage() {
                         <p>
                             Email{' '}
                             <a
-                                className="text-indigo-600"
+                                className="text-fire-600"
                                 href="email: pcushing+burn@gmail.com"
                                 target="_blank"
                                 rel="noreferrer"

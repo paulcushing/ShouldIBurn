@@ -14,7 +14,7 @@ export const CallToAction = () => (
         </div>
         <a
           href="#_"
-          className="inline-flex items-center justify-center w-full px-5 py-4 mt-6 ml-0 font-sans text-base leading-none text-white no-underline bg-indigo-600 border border-indigo-600 border-solid rounded cursor-pointer   hover:bg-indigo-700 hover:border-indigo-700 hover:text-white focus-within:bg-indigo-700 focus-within:border-indigo-700 focus-within:text-white   "
+          className="inline-flex items-center justify-center w-full px-5 py-4 mt-6 ml-0 font-sans text-base leading-none text-white no-underline bg-fire-600 border border-fire-600 border-solid rounded cursor-pointer   hover:bg-fire-700 hover:border-fire-700 hover:text-white focus-within:bg-fire-700 focus-within:border-fire-700 focus-within:text-white   "
         >
           Visit Our Sponsor
           <svg

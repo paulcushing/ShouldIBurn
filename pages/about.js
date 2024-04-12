@@ -23,7 +23,7 @@ export default function AboutPage() {
                             About
                         </h1>
                         <p className="text-left py-4">
-                            <span className="text-indigo-600">
+                            <span className="text-fire-600">
                                 ShouldIBurn.com
                             </span>{' '}
                             is a simple application for helping you determine if
@@ -31,19 +31,19 @@ export default function AboutPage() {
                             have a fire on your property. The common standards
                             for the best conditions to burn are:
                         </p>
-                        <table className="table-auto border border-indigo-600 w-full mt-6 mb-6">
+                        <table className="table-auto border border-fire-600 w-full mt-6 mb-6">
                             <thead>
                                 <tr>
                                     <th>Wind Speed</th>
                                     <th>Air Quality Index</th>
                                 </tr>
                             </thead>
-                            <tbody className="border border-indigo-600">
+                            <tbody className="border border-fire-600">
                                 <tr>
-                                    <td className="border border-indigo-600">
+                                    <td className="border border-fire-600">
                                         {'Speed < 10 MPH'}
                                     </td>
-                                    <td className="border border-indigo-600">
+                                    <td className="border border-fire-600">
                                         {'AQI < 60'}
                                     </td>
                                 </tr>
@@ -67,7 +67,7 @@ export default function AboutPage() {
                             This is an open source project built by Software
                             Engineer,{' '}
                             <a
-                                className="text-indigo-600"
+                                className="text-fire-600"
                                 href="https://github.com/paulcushing"
                                 target="_blank"
                                 rel="noreferrer"

@@ -15,7 +15,7 @@ export const Header = () => {
                     <a href="/" className="inline-block py-4 md:py-0">
                         <span className="p-1 text-xl font-black leading-none text-gray-900">
                             <span>ShouldIBurn</span>
-                            <span className="text-indigo-600">?</span>
+                            <span className="text-fire-600">?</span>
                         </span>
                     </a>
                 </div>
@@ -29,7 +29,7 @@ export const Header = () => {
                             className="inline-flex items-center block w-auto h-16 px-6 text-xl font-black leading-none text-gray-900 md:hidden"
                         >
                             ShouldIBurn
-                            <span className="text-indigo-600">?</span>
+                            <span className="text-fire-600">?</span>
                         </a>
                         <div className="flex flex-col items-start justify-center w-full space-x-6 text-center lg:space-x-8 md:w-2/3 md:mt-0 md:flex-row md:items-center">
                             
@@ -44,13 +44,13 @@ export const Header = () => {
                             </a>
                             <a
                                 href="/about"
-                                className="inline-block w-full py-2 mx-0 font-medium text-left text-gray-700 md:w-auto md:px-0 md:mx-2 hover:text-indigo-600 lg:mx-3 md:text-center"
+                                className="inline-block w-full py-2 mx-0 font-medium text-left text-gray-700 md:w-auto md:px-0 md:mx-2 hover:text-fire-600 lg:mx-3 md:text-center"
                             >
                                 About
                             </a>
                             <a
                                 href="/contact"
-                                className="inline-block w-full py-2 mx-0 font-medium text-left text-gray-700 md:w-auto md:px-0 md:mx-2 hover:text-indigo-600 lg:mx-3 md:text-center"
+                                className="inline-block w-full py-2 mx-0 font-medium text-left text-gray-700 md:w-auto md:px-0 md:mx-2 hover:text-fire-600 lg:mx-3 md:text-center"
                             >
                                 Contact
                             </a>
