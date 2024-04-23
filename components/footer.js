@@ -35,7 +35,7 @@ export const Footer = () => (
         
       </div>
       <p className="mt-8 text-base leading-6 text-center text-gray-500">
-        © 2021{" "}
+        © {new Date().getFullYear() + " "}
         <a
           className="text-fire-600"
           href="https://github.com/paulcushing"

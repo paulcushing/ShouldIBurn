@@ -11,6 +11,7 @@ import GetCoordinatesByGeo from '../components/getCoordinatesByGeo'
 import Header from '../components/header'
 import Loader from '../components/loader'
 import Main from '../components/main'
+import { useInterval } from '../components/useInterval'
 
 export default function IndexPage() {
     const [permissionGranted, setPermissionGranted] = useState(false)
@@ -19,6 +20,7 @@ export default function IndexPage() {
     const [coordinates, setCoordinates] = useState()
     const [conditions, setConditions] = useState()
     const [error, setError] = useState()
+    const [delay, setDelay] = useState(300000) // Start with a 5 minute polling interval
 
     useEffect(() => {
         // If cookies are set, skip "Begin"
@@ -30,6 +32,13 @@ export default function IndexPage() {
             sethaveUserCityZip(true)
         }
     }, [])
+
+    useInterval(() => {
+        if (coordinates) {
+            fetchConditions()
+        }
+        return;
+    }, delay);
 
     const resetLocation = () => {
         Cookies.remove('lat')
@@ -67,16 +76,22 @@ export default function IndexPage() {
         })
     }
 
-    if (coordinates && !conditions) {
+    const fetchConditions = () => {
         getConditions(coordinates).then((data) => {
-            //console.log(data)
             if (!data.weather?.wind || !data.air[0]?.AQI) {
                 setError('Failed to get conditions for that location.')
                 resetLocation()
                 return null
             }
-            setConditions(data)
+            console.log("Getting conditions", data);
+            if (data !== conditions) {
+                setConditions(data)
+            }
         })
+    }
+
+    if (coordinates && !conditions) {
+        fetchConditions()
     }
 
     return (
@@ -88,28 +103,28 @@ export default function IndexPage() {
                     content="Find out if the conditions are right to burn weeds or have a fire on your property."
                 />
             </Head>
-            {error ? (
+            {error && (
                 <ErrorBanner errorText={error} clearError={clearError} />
-            ) : null}
+            )}
             <section className="w-full px-6 pb-12 antialiased bg-white">
                 <div className="mx-auto max-w-7xl">
                     <Header />
 
-                    {!haveUserCityZip && !conditions && !permissionGranted ? (
+                    {!haveUserCityZip && !conditions && !permissionGranted && (
                         <Begin
                             setPermissionGranted={setPermissionGranted}
                             userCityZip={userCityZip}
                             sethaveUserCityZip={sethaveUserCityZip}
                             setUserCityZip={setUserCityZip}
                         />
-                    ) : null}
+                    )}
 
                     {(haveUserCityZip && !conditions) ||
                     (coordinates && !conditions) ? (
                         <Loader />
                     ) : null}
 
-                    {permissionGranted && !coordinates ? (
+                    {permissionGranted && !coordinates && (
                         <Fragment>
                             <Loader />
                             <GetCoordinatesByGeo
@@ -117,14 +132,14 @@ export default function IndexPage() {
                                 setError={setError}
                             />
                         </Fragment>
-                    ) : null}
+                    )}
 
-                    {conditions ? (
+                    {conditions && (
                         <Main
                             conditions={conditions}
                             resetLocation={resetLocation}
                         />
-                    ) : null}
+                    )}
                 </div>
             </section>
 
