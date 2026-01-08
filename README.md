@@ -1,7 +1,7 @@
 # [ShouldIBurn.com](https://shouldiburn.com)
 
 This is a small project to build a simple web app that will provide users with one place to check the conditions and know whether it's safe to burn weeds on their property today. It uses the OpenWeather API and the AirNow API for weather and air quality index data.
-ShouldIBurn is a [Next.js 15](https://nextjs.org/) App Router project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+ShouldIBurn is a [Next.js 16](https://nextjs.org/) App Router project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Local development
 
@@ -43,7 +43,7 @@ The app is currently deployed to ShouldIBurn.com. I'd like to keep things simple
 
 ## Deployment
 
-This app uses Next.js 15 App Router. Build with:
+This app uses Next.js 16 App Router. Build with:
 
 ```bash
 yarn build
