@@ -14,8 +14,8 @@ async function getCoordinatesByCityZip(userCityZip) {
         }
     } else {
         const locationTextArray = userCityZip.split(',')
-       
-        const queryuserCityZip = locationTextArray[1] ? locationTextArray[0] + ',' + locationTextArray[1].replace(/\s/g, '') : userCityZip 
+
+        const queryuserCityZip = locationTextArray[1] ? locationTextArray[0] + ',' + locationTextArray[1].replace(/\s/g, '') : userCityZip
         loc = {
             city: queryuserCityZip,
         }

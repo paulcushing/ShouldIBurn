@@ -1,13 +1,17 @@
+"use client";
+
 import { useState, useEffect } from 'react'
 import Cookies from 'js-cookie'
 
-export const GetCoordinatesByGeo = (props) => {
-    const [done, setDone] = useState()
+const GetCoordinatesByGeo = (props) => {
+    const [done, setDone] = useState(false)
+
+    const isBrowser = typeof window !== 'undefined'
 
     const options = {
         enableHighAccuracy: false,
-        timeout: 1000 * 60 * .5, // 1/2 a minute
-        maximumAge: 1000 * 3600 * 12, // 12 hour
+        timeout: 1000 * 60 * .5,
+        maximumAge: 1000 * 3600 * 12,
     }
 
     const handleSuccess = (position) => {
@@ -23,12 +27,11 @@ export const GetCoordinatesByGeo = (props) => {
     }
 
     const handleError = (error) => {
-        console.log(error.message)
         props.setError("Geolocation: " + error.message)
     }
 
     useEffect(() => {
-        if (!done) {
+        if (!done && isBrowser) {
             if (!navigator.geolocation) {
                 props.setError('Geolocation is not supported.')
                 return
@@ -40,7 +43,8 @@ export const GetCoordinatesByGeo = (props) => {
             )
             setDone(true)
         }
-    }, [options])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [done, isBrowser])
 
     return null
 }
