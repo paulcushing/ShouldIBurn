@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@netlify/plugin-nextjs": "^4.41.3",
-    "@sentry/nextjs": "^8.0.0-alpha.8",
+    "@sentry/nextjs": "^8.0.0",
     "autoprefixer": "10.4.16",
     "js-cookie": "^3.0.5",
     "next": "^15.2.1",

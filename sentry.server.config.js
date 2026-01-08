@@ -10,11 +10,7 @@ if (process.env.NODE_ENV === 'production') {
 
   Sentry.init({
     dsn: SENTRY_DSN || 'https://992be6eb86df4fa3a5ee6ea104eaa993@o501587.ingest.sentry.io/5701435',
-    // Adjust this value in production, or use tracesSampler for greater control
-    tracesSampleRate: 1.0,
-    // ...
-    // Note: if you want to override the automatic release value, do not set a
-    // `release` value here - use the environment variable `SENTRY_RELEASE`, so
-    // that it will also get attached to your source maps
+    tracesSampleRate: 0.1,
+    // Optionally use tracesSampler for finer control
   });
 }

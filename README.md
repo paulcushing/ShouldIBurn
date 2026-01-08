@@ -10,7 +10,7 @@ Create a `.env` file with required environment variables:
 ```bash
 OW_API_KEY=********************
 AN_API_KEY=********************
-# Optional: Sentry DSN for error monitoring
+# Required in production: Sentry DSN for error monitoring
 SENTRY_DSN=************************
 ```
 

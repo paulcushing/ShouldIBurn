@@ -1,0 +1,378 @@
+In app/api/_weather/route.js:
+
+> +const fetch = require('node-fetch');
++
++export const POST = async (req) => {
++    const { latitude, longitude } = await req.json();
++
++    if (!latitude || !longitude) {
++        return new Response(JSON.stringify({ error: 'Missing required parameters' }), { status: 400 });
++    }
++
++    const openWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=imperial&appid=${process.env.OW_API_KEY}`;
++
++    try {
++        const response = await fetch(openWeatherUrl);
++        const data = await response.json();
++        return new Response(JSON.stringify(data), { status: 200 });
++    } catch (err) {
+Errors are logged to console but not reported to Sentry, even though Sentry is imported. For consistency with other API routes (like conditions/route.js), consider capturing exceptions with Sentry.captureException(err) to enable proper error monitoring in production.
+
+⬇️ Suggested change
+-    } catch (err) {
++    } catch (err) {
++        Sentry.captureException(err);
+In components/getCoordinatesByGeo.js:
+
+> +// Add this to ensure the component is only imported on the client side
++export default dynamic(() => Promise.resolve(GetCoordinatesByGeo), {
++    ssr: false
++})
+This dynamic import pattern is unusual. The component wraps itself with a dynamic import in its own default export. This creates a confusing module structure where importing the component actually imports a dynamically-wrapped version of itself. Consider moving the dynamic import to where this component is used (in app/page.js) for better clarity and conventional usage.
+
+In sentry.server.config.js:
+
+>  
+-Sentry.init({
+-  dsn: SENTRY_DSN || 'https://992be6eb86df4fa3a5ee6ea104eaa993@o501587.ingest.sentry.io/5701435',
+-  // Adjust this value in production, or use tracesSampler for greater control
+-  tracesSampleRate: 1.0,
+-  // ...
+-  // Note: if you want to override the automatic release value, do not set a
+-  // `release` value here - use the environment variable `SENTRY_RELEASE`, so
+-  // that it will also get attached to your source maps
+-});
++  Sentry.init({
++    dsn: SENTRY_DSN || 'https://992be6eb86df4fa3a5ee6ea104eaa993@o501587.ingest.sentry.io/5701435',
++    // Adjust this value in production, or use tracesSampler for greater control
++    tracesSampleRate: 1.0,
+The tracesSampleRate is set to 1.0 (100%) which means every transaction will be sent to Sentry. In production, this can generate significant costs and data volume. Consider reducing this to a more reasonable value like 0.1 (10%) or use tracesSampler for more granular control as suggested in the comment.
+
+In app/about/metadata.js:
+
+> +export const metadata = {
++    title: 'About | ShouldIBurn.com',
++    description: 'Find out if the conditions are right to burn weeds or have a fire on your property.',
++};
+This metadata export is unused because the corresponding page.js file has the 'use client' directive. Metadata exports only work in Server Components in Next.js App Router. This file should either be removed, or the 'use client' directive should be removed from app/about/page.js.
+
+⬇️ Suggested change
+-export const metadata = {
+-    title: 'About | ShouldIBurn.com',
+-    description: 'Find out if the conditions are right to burn weeds or have a fire on your property.',
+-};
+In app/api/airquality/route.js:
+
+> +        const response = await fetch(airNowUrl);
++        const data = await response.json();
+When the fetch fails or the response is not an array, this will return 'undefined' wrapped in JSON. This could cause issues on the client. Consider adding validation to check if data is an array and has at least one element before accessing data[0], or return a more descriptive error.
+
+⬇️ Suggested change
+-        const response = await fetch(airNowUrl);
+-        const data = await response.json();
++        const response = await fetch(airNowUrl);
++
++        if (!response.ok) {
++            return new Response(
++                JSON.stringify({ error: 'Failed to fetch air quality data from upstream service' }),
++                { status: 502 }
++            );
++        }
++
++        const data = await response.json();
++
++        if (!Array.isArray(data) || data.length === 0) {
++            return new Response(
++                JSON.stringify({ error: 'Unexpected response format from air quality service' }),
++                { status: 502 }
++            );
++        }
+In app/api/weather/route.js:
+
+> @@ -0,0 +1,25 @@
++import * as Sentry from '@sentry/nextjs';
++const fetch = require('node-fetch');
+Next.js 15 has built-in fetch support in server components and API routes, making node-fetch unnecessary. Using node-fetch adds an extra dependency and potential compatibility issues. Remove the node-fetch import and use the global fetch API that Next.js provides by default.
+
+⬇️ Suggested change
+-const fetch = require('node-fetch');
+In app/api/getcoordinates/route.js:
+
+> @@ -0,0 +1,32 @@
++import * as Sentry from '@sentry/nextjs';
++const fetch = require('node-fetch');
+Next.js 15 has built-in fetch support in server components and API routes, making node-fetch unnecessary. Using node-fetch adds an extra dependency and potential compatibility issues. Remove the node-fetch import and use the global fetch API that Next.js provides by default.
+
+⬇️ Suggested change
+-const fetch = require('node-fetch');
+In app/api/_weather/route.js:
+
+> @@ -0,0 +1,21 @@
++import * as Sentry from '@sentry/nextjs';
++const fetch = require('node-fetch');
+Next.js 15 has built-in fetch support in server components and API routes, making node-fetch unnecessary. Using node-fetch adds an extra dependency and potential compatibility issues. Remove the node-fetch import and use the global fetch API that Next.js provides by default.
+
+⬇️ Suggested change
+-const fetch = require('node-fetch');
+In package.json:
+
+>      "start": "next start"
+   },
+   "dependencies": {
+-    "@netlify/plugin-nextjs": "^4.5.0",
+-    "@sentry/nextjs": "^7.110.0",
+-    "@zeit/next-source-maps": "^0.0.3",
+-    "autoprefixer": "^10.2.5",
+-    "js-cookie": "^2.2.1",
+-    "next": "^12.1.5",
+-    "node-fetch": "^2.6.1",
+-    "postcss": "^8.4.12",
+-    "react": "^18.1.0",
+-    "react-dom": "^18.1.0",
+-    "swr": "^1.3.0",
+-    "tailwindcss": "^3.0.24"
+-  }
++    "@netlify/plugin-nextjs": "^4.41.3",
++    "@sentry/nextjs": "^8.0.0-alpha.8",
+Using an alpha version (@sentry/nextjs@8.0.0-alpha.8) in a production codebase is not recommended. Alpha versions are unstable, may have bugs, and are not intended for production use. Please update to the latest stable version (e.g., "^7.110.0" or latest stable ^8.x if available).
+
+⬇️ Suggested change
+-    "@sentry/nextjs": "^8.0.0-alpha.8",
++    "@sentry/nextjs": "^8.0.0",
+In app/api/getcoordinates/route.js:
+
+> +            url = `http://api.openweathermap.org/geo/1.0/zip?zip=${zipcode}&appid=${process.env.OW_API_KEY}`;
++        } else if (city) {
++            const formattedCity = city.replace(/\s/g, '') + ',US';
++            url = `http://api.openweathermap.org/geo/1.0/direct?q=${formattedCity}&limit=1&appid=${process.env.OW_API_KEY}`;
+Using HTTP instead of HTTPS for API requests exposes the API key in plain text over the network. The OpenWeather API supports HTTPS. Update these URLs to use "https://" instead of "http://" to ensure secure transmission of API credentials.
+
+⬇️ Suggested change
+-            url = `http://api.openweathermap.org/geo/1.0/zip?zip=${zipcode}&appid=${process.env.OW_API_KEY}`;
+-        } else if (city) {
+-            const formattedCity = city.replace(/\s/g, '') + ',US';
+-            url = `http://api.openweathermap.org/geo/1.0/direct?q=${formattedCity}&limit=1&appid=${process.env.OW_API_KEY}`;
++            url = `https://api.openweathermap.org/geo/1.0/zip?zip=${zipcode}&appid=${process.env.OW_API_KEY}`;
++        } else if (city) {
++            const formattedCity = city.replace(/\s/g, '') + ',US';
++            url = `https://api.openweathermap.org/geo/1.0/direct?q=${formattedCity}&limit=1&appid=${process.env.OW_API_KEY}`;
+In instrumentation.ts.bak:
+
+> +import * as Sentry from '@sentry/nextjs';
++
++export function register() {
++    // Initialize Sentry for server-side and edge runtimes
++    if (process.env.NEXT_RUNTIME === 'nodejs' || process.env.NEXT_RUNTIME === 'edge') {
++        Sentry.init({
++            dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
++            tracesSampleRate: 1.0,
++            // Set your other Sentry configuration here
++        });
++    }
++}
+This file appears to be a backup file based on the ".bak" extension. Backup files should not be committed to the repository as they can cause confusion and clutter the codebase. Please remove this file or, if it's intended for use, rename it appropriately and integrate it into the application.
+
+⬇️ Suggested change
+-import * as Sentry from '@sentry/nextjs';
+-
+-export function register() {
+-    // Initialize Sentry for server-side and edge runtimes
+-    if (process.env.NEXT_RUNTIME === 'nodejs' || process.env.NEXT_RUNTIME === 'edge') {
+-        Sentry.init({
+-            dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+-            tracesSampleRate: 1.0,
+-            // Set your other Sentry configuration here
+-        });
+-    }
+-}
++// This file was a backup (".bak") of the real instrumentation setup and should not contain code.
++// Please remove `instrumentation.ts.bak` from the repository; the active implementation
++// should live in `instrumentation.ts` and be properly integrated into the application.
+In sentry.client.config.js:
+
+>  
+-Sentry.init({
+-  dsn: SENTRY_DSN || 'https://992be6eb86df4fa3a5ee6ea104eaa993@o501587.ingest.sentry.io/5701435',
+-  // Adjust this value in production, or use tracesSampler for greater control
+-  tracesSampleRate: 1.0,
+-  // ...
+-  // Note: if you want to override the automatic release value, do not set a
+-  // `release` value here - use the environment variable `SENTRY_RELEASE`, so
+-  // that it will also get attached to your source maps
+-});
++  Sentry.init({
++    dsn: SENTRY_DSN || 'https://992be6eb86df4fa3a5ee6ea104eaa993@o501587.ingest.sentry.io/5701435',
++    // Adjust this value in production, or use tracesSampler for greater control
++    tracesSampleRate: 1.0,
+The tracesSampleRate is set to 1.0 (100%) which means every transaction will be sent to Sentry. In production, this can generate significant costs and data volume. Consider reducing this to a more reasonable value like 0.1 (10%) or use tracesSampler for more granular control as suggested in the comment.
+
+In app/api/conditions/route.js:
+
+> @@ -0,0 +1,36 @@
++import * as Sentry from '@sentry/nextjs';
++import fetch from 'node-fetch';
+Next.js 15 has built-in fetch support in server components and API routes, making node-fetch unnecessary. Using node-fetch adds an extra dependency and potential compatibility issues. Remove the node-fetch import and use the global fetch API that Next.js provides by default.
+
+⬇️ Suggested change
+-import fetch from 'node-fetch';
+In app/_not-found.js:
+
+> +import Error from 'next/error';
++
++export default function NotFound() {
++    // Opinionated: do not record an exception in Sentry for 404
++    return <Error statusCode={404} />;
++}
+In Next.js App Router, the file name "not-found.js" (without underscore prefix) should be used for custom 404 pages, not "_not-found.js". The underscore prefix makes this a private file that won't be used by Next.js routing conventions. Rename this file to "not-found.js" for it to function as intended.
+
+In app/api/_weather/route.js:
+
+> +    const { latitude, longitude } = await req.json();
++
++    if (!latitude || !longitude) {
++        return new Response(JSON.stringify({ error: 'Missing required parameters' }), { status: 400 });
++    }
++
++    const openWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=imperial&appid=${process.env.OW_API_KEY}`;
++
++    try {
++        const response = await fetch(openWeatherUrl);
++        const data = await response.json();
++        return new Response(JSON.stringify(data), { status: 200 });
++    } catch (err) {
++        console.log(err);
+The req.json() call is not wrapped in a try-catch block, which means JSON parsing errors will crash the API route. Wrap this in a try-catch or move it inside the existing try block to handle malformed JSON bodies gracefully and return a proper error response.
+
+⬇️ Suggested change
+-    const { latitude, longitude } = await req.json();
+-
+-    if (!latitude || !longitude) {
+-        return new Response(JSON.stringify({ error: 'Missing required parameters' }), { status: 400 });
+-    }
+-
+-    const openWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=imperial&appid=${process.env.OW_API_KEY}`;
+-
+-    try {
+-        const response = await fetch(openWeatherUrl);
+-        const data = await response.json();
+-        return new Response(JSON.stringify(data), { status: 200 });
+-    } catch (err) {
+-        console.log(err);
++    try {
++        const { latitude, longitude } = await req.json();
++
++        if (!latitude || !longitude) {
++            return new Response(JSON.stringify({ error: 'Missing required parameters' }), { status: 400 });
++        }
++
++        const openWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=imperial&appid=${process.env.OW_API_KEY}`;
++
++        const response = await fetch(openWeatherUrl);
++        const data = await response.json();
++        return new Response(JSON.stringify(data), { status: 200 });
++    } catch (err) {
++        console.log(err);
++        if (err instanceof SyntaxError) {
++            return new Response(JSON.stringify({ error: 'Invalid JSON body' }), { status: 400 });
++        }
+In README.md:
+
+>  OW_API_KEY=********************
+ AN_API_KEY=********************
++# Optional: Sentry DSN for error monitoring
+The comment states "Optional: Sentry DSN for error monitoring" but based on the Sentry configuration files, Sentry is actually required in production (it's initialized without checking if the DSN exists). Either update the comment to indicate it's required for production, or add proper DSN validation in the Sentry config files.
+
+⬇️ Suggested change
+-# Optional: Sentry DSN for error monitoring
++# Required in production: Sentry DSN for error monitoring
+In app/api/airquality/route.js:
+
+> @@ -0,0 +1,26 @@
++import * as Sentry from '@sentry/nextjs';
++const fetch = require('node-fetch');
+Next.js 15 has built-in fetch support in server components and API routes, making node-fetch unnecessary. Using node-fetch adds an extra dependency and potential compatibility issues. Remove the node-fetch import and use the global fetch API that Next.js provides by default.
+
+⬇️ Suggested change
+-const fetch = require('node-fetch');
+In app/api/airquality/route.js:
+
+> +    const { latitude, longitude } = await req.json();
++
++    if (!latitude || !longitude) {
++        return new Response(JSON.stringify({ error: 'Missing required parameters' }), { status: 400 });
++    }
++
++    const now = new Date();
++    const year = now.getFullYear();
++    const month = ('0' + (now.getMonth() + 1)).slice(-2);
++    const date = ('0' + now.getDate()).slice(-2);
++    const todayDate = `${year}-${month}-${date}`;
++    const airNowUrl = `https://www.airnowapi.org/aq/forecast/latLong/?format=application/json&latitude=${latitude}&longitude=${longitude}&date=${todayDate}&distance=25&API_KEY=${process.env.AN_API_KEY}`;
++
++    try {
++        const response = await fetch(airNowUrl);
++        const data = await response.json();
++        return new Response(JSON.stringify(data[0]), { status: 200 });
++    } catch (err) {
++        console.log(err);
+The req.json() call is not wrapped in a try-catch block, which means JSON parsing errors will crash the API route. Wrap this in a try-catch or move it inside the existing try block to handle malformed JSON bodies gracefully and return a proper error response.
+
+⬇️ Suggested change
+-    const { latitude, longitude } = await req.json();
+-
+-    if (!latitude || !longitude) {
+-        return new Response(JSON.stringify({ error: 'Missing required parameters' }), { status: 400 });
+-    }
+-
+-    const now = new Date();
+-    const year = now.getFullYear();
+-    const month = ('0' + (now.getMonth() + 1)).slice(-2);
+-    const date = ('0' + now.getDate()).slice(-2);
+-    const todayDate = `${year}-${month}-${date}`;
+-    const airNowUrl = `https://www.airnowapi.org/aq/forecast/latLong/?format=application/json&latitude=${latitude}&longitude=${longitude}&date=${todayDate}&distance=25&API_KEY=${process.env.AN_API_KEY}`;
+-
+-    try {
+-        const response = await fetch(airNowUrl);
+-        const data = await response.json();
+-        return new Response(JSON.stringify(data[0]), { status: 200 });
+-    } catch (err) {
+-        console.log(err);
++    try {
++        const { latitude, longitude } = await req.json();
++
++        if (!latitude || !longitude) {
++            return new Response(JSON.stringify({ error: 'Missing required parameters' }), { status: 400 });
++        }
++
++        const now = new Date();
++        const year = now.getFullYear();
++        const month = ('0' + (now.getMonth() + 1)).slice(-2);
++        const date = ('0' + now.getDate()).slice(-2);
++        const todayDate = `${year}-${month}-${date}`;
++        const airNowUrl = `https://www.airnowapi.org/aq/forecast/latLong/?format=application/json&latitude=${latitude}&longitude=${longitude}&date=${todayDate}&distance=25&API_KEY=${process.env.AN_API_KEY}`;
++
++        const response = await fetch(airNowUrl);
++        const data = await response.json();
++        return new Response(JSON.stringify(data[0]), { status: 200 });
++    } catch (err) {
++        console.log(err);
++        if (err instanceof SyntaxError) {
++            return new Response(JSON.stringify({ error: 'Invalid JSON body' }), { status: 400 });
++        }
+In app/api/_weather/route.js:
+
+> @@ -0,0 +1,21 @@
++import * as Sentry from '@sentry/nextjs';
+Unused import Sentry.
+
+⬇️ Suggested change
+-import * as Sentry from '@sentry/nextjs';
+In app/api/airquality/route.js:
+
+> @@ -0,0 +1,26 @@
++import * as Sentry from '@sentry/nextjs';
+Unused import Sentry.
+
+⬇️ Suggested change
+-import * as Sentry from '@sentry/nextjs';
+—
