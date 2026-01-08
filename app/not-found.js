@@ -1,6 +1,13 @@
-import Error from 'next/error';
+import Link from "next/link";
 
 export default function NotFound() {
-    // Opinionated: do not record an exception in Sentry for 404
-    return <Error statusCode={404} />;
+    return (
+        <div style={{ padding: 24 }}>
+            <h1>404</h1>
+            <p>Page not found.</p>
+            <p>
+                <Link href="/">Go back home</Link>
+            </p>
+        </div>
+    );
 }
