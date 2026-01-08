@@ -1,8 +1,14 @@
+"use client";
+
 import { useState, useEffect } from 'react'
 import Cookies from 'js-cookie'
+import dynamic from 'next/dynamic'
 
 export const GetCoordinatesByGeo = (props) => {
-    const [done, setDone] = useState()
+    const [done, setDone] = useState(false)
+
+    // Only run the geolocation code on the client side
+    const isBrowser = typeof window !== 'undefined'
 
     const options = {
         enableHighAccuracy: false,
@@ -23,12 +29,12 @@ export const GetCoordinatesByGeo = (props) => {
     }
 
     const handleError = (error) => {
-        console.log(error.message)
         props.setError("Geolocation: " + error.message)
     }
 
     useEffect(() => {
-        if (!done) {
+        // Only execute this effect on the client side
+        if (!done && isBrowser) {
             if (!navigator.geolocation) {
                 props.setError('Geolocation is not supported.')
                 return
@@ -40,9 +46,13 @@ export const GetCoordinatesByGeo = (props) => {
             )
             setDone(true)
         }
-    }, [options])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [done, isBrowser])
 
     return null
 }
 
-export default GetCoordinatesByGeo
+// Add this to ensure the component is only imported on the client side
+export default dynamic(() => Promise.resolve(GetCoordinatesByGeo), {
+    ssr: false
+})

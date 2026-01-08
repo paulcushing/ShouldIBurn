@@ -1,24 +1,15 @@
-import Head from 'next/head'
-import { Fragment } from 'react'
+'use client';
 
-import Footer from '../components/footer'
-import Header from '../components/header'
+import Footer from '../../components/footer';
+import Header from '../../components/header';
 
 export default function AboutPage() {
     return (
-        <Fragment>
-            <Head>
-                <title>About | ShouldIBurn.com</title>
-                <meta
-                    name="description"
-                    content="Find out if the conditions are right to burn weeds or have a fire on your property."
-                />
-            </Head>
+        <>
             <section className="w-full px-6 pb-12 antialiased bg-white">
                 <div className="mx-auto max-w-7xl">
                     <Header />
-
-                    <div className="container max-w-lg px-4 py-8 mx-auto text-left md:max-w-80 text-center">
+                    <div className="container max-w-full px-4 py-8 mx-auto text-left md:max-w-5xl">
                         <h1 className="text-5xl font-extrabold leading-10 tracking-tight text-gray-900 text-center sm:leading-none md:text-6xl lg:text-7xl mb-12">
                             About
                         </h1>
@@ -80,8 +71,7 @@ export default function AboutPage() {
                     </div>
                 </div>
             </section>
-
             <Footer />
-        </Fragment>
-    )
+        </>
+    );
 }

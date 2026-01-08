@@ -161,12 +161,10 @@ export default class AQI {
 
 
     AQIOzone1hr(concentration) {
-        console.log(concentration)
         var Conc=parseFloat(concentration);
         var c;
         var AQI;
         c = (Math.floor(Conc))/1000;
-        console.log(c);
         if (c>=0 && c<=.124) {
             AQI="Out of Range";
         } else if (c>=.125 && c<.165) {
@@ -246,7 +244,6 @@ export default class AQI {
     getO3() {
         const o3PPB = this.convertMicroToPPB(this.o3);
         const o3Index = this.AQIOzone1hr(o3PPB);
-        console.log('o3 > in: ' + this.o3 + ' (' + o3PPB + ') ' + ' out: ' + o3Index);
         return o3Index;
     }
 
