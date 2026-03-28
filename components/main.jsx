@@ -37,11 +37,11 @@ export const Main = (props) => {
                 <div className="mx-auto mt-5 text-gray-500 md:mt-12 md:max-w-lg text-center lg:text-lg">
                     <h2 className="text-5xl font-extrabold leading-10 tracking-tight text-gray-900 text-center mt-36 mb-36">
                         {windAcceptable && aqiAcceptable ? (
-                            <span className="text-4xl font-extrabold text-white rounded-full bg-gradient-to-b from-amber-300 to-fire-600 p-20">
+                            <span className="inline-flex items-center justify-center text-4xl font-extrabold text-white rounded-full bg-gradient-to-b from-amber-300 to-fire-600 w-40 h-40">
                                 Yes
                             </span>
                         ) : (
-                            <span className="text-4xl font-extrabold text-white rounded-full bg-gradient-to-b from-gray-400 to-gray-600 p-20">
+                            <span className="inline-flex items-center justify-center text-4xl font-extrabold text-white rounded-full bg-gradient-to-b from-gray-400 to-gray-600 w-40 h-40">
                                 No
                             </span>
                         )}
