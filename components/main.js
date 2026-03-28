@@ -5,6 +5,7 @@ export const Main = (props) => {
 
     const weather = conditions.weather
     const locationName = weather.name
+    const nearestStation = conditions.nearestStation || null
 
     const hasAirQuality =
         Array.isArray(conditions.air) &&

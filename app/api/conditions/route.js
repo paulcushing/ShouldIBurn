@@ -48,7 +48,6 @@ const postHandler = async (req) => {
         const date = ('0' + now.getDate()).slice(-2);
         const todayDate = `${year}-${month}-${date}`;
         const openWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=imperial&appid=${process.env.OW_API_KEY}`;
-        const airNowUrl = `https://www.airnowapi.org/aq/observation/latLong/current/?format=application/json&latitude=${latitude}&longitude=${longitude}&date=${todayDate}&distance=50&API_KEY=${process.env.AN_API_KEY}`;
 
         const [weatherResult, airResult] = await Promise.all([
             fetchJsonWithTimeout(openWeatherUrl, 'OpenWeather'),
