@@ -34,6 +34,12 @@ export default function HomePage() {
         }
     }, []);
 
+    useEffect(() => {
+        if (haveUserCityZip || permissionGranted) {
+            setError(null);
+        }
+    }, [haveUserCityZip, permissionGranted]);
+
     useInterval(() => {
         if (coordinates) {
             fetchConditions();
