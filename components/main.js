@@ -7,14 +7,21 @@ export const Main = (props) => {
     const locationName = weather.name
     const nearestStation = conditions.nearestStation || null
 
-    const air = conditions.air[0]
+    const hasAirQuality =
+        Array.isArray(conditions.air) &&
+        conditions.air.length > 0 &&
+        conditions.air[0]?.AQI != null
 
     const windSpeed = weather.wind.speed
     const windGusts = weather.wind.gust
-    const airQualityScore = air.AQI
-    const aqiAcceptable = airQualityScore < 60
+    const airQualityScore = hasAirQuality ? conditions.air[0].AQI : null
+    const aqiAcceptable = hasAirQuality ? airQualityScore < 60 : true
     const windAcceptable = windSpeed < 10
     const gustWarning = windGusts > 12
+    const showAqiWarning = !hasAirQuality || conditions.degraded
+    const aqiCaveatMessage =
+        conditions.warning ||
+        'Air quality data is currently unavailable. Recommendation is based on wind speed only.'
 
     return (
         <div className="container max-w-lg px-4 py-8 mx-auto md:max-w-none text-center">
@@ -59,12 +66,14 @@ export const Main = (props) => {
                             Current Air Quality:{' '}
                             <span
                                 className={
-                                    aqiAcceptable
+                                    !hasAirQuality
+                                        ? 'text-gray-400'
+                                        : aqiAcceptable
                                         ? 'text-amber-600'
                                         : 'text-fire-500'
                                 }
                             >
-                                {airQualityScore}{' '}
+                                {hasAirQuality ? airQualityScore : '?*'}{' '}
                                 <span className="text-sm text-gray-300">
                                     AQI
                                 </span>
@@ -81,21 +90,11 @@ export const Main = (props) => {
                             </p>
                         </div>
                     ) : null}
-                    {nearestStation ? (
-                        <div className="mt-8 border-dashed border-2 border-yellow-400 rounded-md p-4 bg-yellow-50">
+                    {showAqiWarning ? (
+                        <div className="mt-8 border-dashed border-2 border-amber-400 rounded-md p-4 bg-amber-50">
                             <p className="text-md text-gray-800">
-                                <span className="text-3xl">*</span> No weather
-                                station was found at your exact location. Air
-                                quality and wind readings are from the nearest
-                                available station:{' '}
-                                <span className="font-semibold">
-                                    {nearestStation.name}
-                                </span>
-                                , approximately{' '}
-                                <span className="font-semibold">
-                                    {nearestStation.distance} miles
-                                </span>{' '}
-                                away.
+                                <span className="text-3xl">*</span>{' '}
+                                {aqiCaveatMessage}
                             </p>
                         </div>
                     ) : null}
