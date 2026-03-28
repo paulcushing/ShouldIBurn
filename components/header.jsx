@@ -21,7 +21,7 @@ export const Header = () => {
                 </div>
 
                 <div
-                    className={`top-0 left-0 items-start w-full h-full p-4 text-sm bg-gray-900 bg-opacity-50 md:items-center md:w-3/4 md:absolute lg:text-base md:bg-transparent md:p-0 md:relative md:flex ${classModifier}`}
+                    className={`top-0 left-0 items-start w-full h-full p-4 text-sm bg-gray-900/50 md:items-center md:w-3/4 md:absolute lg:text-base md:bg-transparent md:p-0 md:relative md:flex ${classModifier}`}
                 >
                     <div className="flex-col w-full h-auto overflow-hidden bg-white rounded-lg md:bg-transparent md:overflow-visible md:rounded-none md:relative md:flex md:flex-row">
                         <a
@@ -44,13 +44,13 @@ export const Header = () => {
                             </a>
                             <a
                                 href="/about"
-                                className="inline-block w-full py-2 mx-0 font-medium text-left text-gray-700 md:w-auto md:px-0 md:mx-2 hover:text-fire-600 lg:mx-3 md:text-center"
+                                className="inline-block w-full py-2 mx-0 ml-6 font-medium text-left text-gray-700 md:ml-0 md:w-auto md:px-0 md:mx-2 hover:text-fire-600 lg:mx-3 md:text-center"
                             >
                                 About
                             </a>
                             <a
                                 href="/contact"
-                                className="inline-block w-full py-2 mx-0 font-medium text-left text-gray-700 md:w-auto md:px-0 md:mx-2 hover:text-fire-600 lg:mx-3 md:text-center"
+                                className="inline-block w-full py-2 mx-0 ml-6 font-medium text-left text-gray-700 md:ml-0 md:w-auto md:px-0 md:mx-2 hover:text-fire-600 lg:mx-3 md:text-center"
                             >
                                 Contact
                             </a>
