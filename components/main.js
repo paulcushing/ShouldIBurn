@@ -5,6 +5,7 @@ export const Main = (props) => {
 
     const weather = conditions.weather
     const locationName = weather.name
+    const nearestStation = conditions.nearestStation || null
 
     const air = conditions.air[0]
 
@@ -77,6 +78,24 @@ export const Main = (props) => {
                                 may still exceed 10 MPH. You are responsible to
                                 monitor the wind speeds when you burn and
                                 exercise due caution.
+                            </p>
+                        </div>
+                    ) : null}
+                    {nearestStation ? (
+                        <div className="mt-8 border-dashed border-2 border-yellow-400 rounded-md p-4 bg-yellow-50">
+                            <p className="text-md text-gray-800">
+                                <span className="text-3xl">*</span> No weather
+                                station was found at your exact location. Air
+                                quality and wind readings are from the nearest
+                                available station:{' '}
+                                <span className="font-semibold">
+                                    {nearestStation.name}
+                                </span>
+                                , approximately{' '}
+                                <span className="font-semibold">
+                                    {nearestStation.distance} miles
+                                </span>{' '}
+                                away.
                             </p>
                         </div>
                     ) : null}

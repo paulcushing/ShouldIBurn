@@ -78,7 +78,7 @@ export default function HomePage() {
 
     const fetchConditions = () => {
         getConditions(coordinates).then((data) => {
-            if (!data.weather?.wind || !data.air[0]?.AQI) {
+            if (!data.weather?.wind || !data.air?.length || !data.air[0]?.AQI) {
                 console.log('error: ', data);
                 setError('Failed to get conditions for that location.');
                 resetLocation();
